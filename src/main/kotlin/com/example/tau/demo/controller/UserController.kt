@@ -28,7 +28,7 @@ class UserController(private val service: UserService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody user:User) : User = service.addUser(user)
+    fun addUser(@RequestBody user:User) : User = service.addUser(user)
 
     @DeleteMapping("/{mail}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

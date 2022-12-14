@@ -30,7 +30,7 @@ class WeatherForecastController(private val service: WeatherForecastService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody weatherForecast: WeatherForecast) : WeatherForecast = service.addWeatherForecast(weatherForecast)
+    fun addWeatherForecast(@RequestBody weatherForecast: WeatherForecast) : WeatherForecast = service.addWeatherForecast(weatherForecast)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

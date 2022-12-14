@@ -30,7 +30,7 @@ class AdminController(private val service: AdminService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody admin: Admin) : Admin = service.addAdmin(admin)
+    fun addAdmin(@RequestBody admin: Admin) : Admin = service.addAdmin(admin)
 
     @DeleteMapping("/{no}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

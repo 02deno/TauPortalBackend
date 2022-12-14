@@ -29,7 +29,7 @@ class BusController(private val service: BusService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody bus: Bus) : Bus = service.addBus(bus)
+    fun addBus(@RequestBody bus: Bus) : Bus = service.addBus(bus)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

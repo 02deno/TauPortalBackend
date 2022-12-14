@@ -30,7 +30,7 @@ class ClassroomController(private val service: ClassroomService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody classroom: Classroom) : Classroom = service.addClassroom(classroom)
+    fun addClassroom(@RequestBody classroom: Classroom) : Classroom = service.addClassroom(classroom)
 
     @DeleteMapping("/{code}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

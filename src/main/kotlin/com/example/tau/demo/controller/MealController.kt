@@ -30,7 +30,7 @@ class MealController(private val service: MealService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody meal: Meal) : Meal = service.addMeal(meal)
+    fun addMeal(@RequestBody meal: Meal) : Meal = service.addMeal(meal)
 
     @DeleteMapping("/{date}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

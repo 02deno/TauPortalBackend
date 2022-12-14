@@ -28,7 +28,7 @@ class AnnouncementController(private val service: AnnouncementService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody announcement: Announcement) : Announcement = service.addAnnouncement(announcement)
+    fun addAnnouncement(@RequestBody announcement: Announcement) : Announcement = service.addAnnouncement(announcement)
 
     @DeleteMapping("/{text}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

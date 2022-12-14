@@ -29,7 +29,7 @@ class StudentController(private val service : StudentService) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addBank(@RequestBody student : Student) : Student = service.addStudent(student)
+    fun addStudent(@RequestBody student : Student) : Student = service.addStudent(student)
 
     @DeleteMapping("/{mail}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

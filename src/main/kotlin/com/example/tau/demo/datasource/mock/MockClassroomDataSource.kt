@@ -10,9 +10,9 @@ import kotlin.NoSuchElementException
 @Repository
 class MockClassroomDataSource : ClassroomDataSource {
     val classrooms = mutableListOf<Classroom>(
-        Classroom(UUID.randomUUID(),"ED-5"),
-        Classroom(UUID.randomUUID(),"ED-6"),
-        Classroom(UUID.randomUUID(),"ED-7")
+        Classroom(UUID.fromString("35cf9f45-2ab0-46b9-8698-30565527bcbb"),"ED-5"),
+        Classroom(UUID.fromString("5a76cf92-7421-4900-bcf6-64ffc37f0fd4"),"ED-6"),
+        Classroom(UUID.fromString("4b50c092-1753-428f-968c-0c18f77cd394"),"ED-7")
       
         
     )

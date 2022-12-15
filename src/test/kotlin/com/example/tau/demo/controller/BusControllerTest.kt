@@ -1,6 +1,6 @@
 package com.example.tau.demo.controller
 
-import com.example.tau.demo.model.User
+import com.example.tau.demo.model.Bus
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
@@ -14,25 +14,26 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.*
+import java.time.LocalDateTime
 import java.util.*
 
 @SpringBootTest
 @AutoConfigureMockMvc
-internal class UserControllerTest @Autowired constructor(
+internal class BusControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper:ObjectMapper
 ) {
 
 
 
-    val baseUrl = "/api/users"
+    val baseUrl = "/api/buses"
 
     @Nested
-    @DisplayName("GET /api/users")
+    @DisplayName("GET /api/buses")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class GetUsers {
+    inner class GetBuss {
         @Test
-        fun `should return all users `() {
+        fun `should return all buses `() {
 
             // when/then
             mockMvc.get(baseUrl)
@@ -40,8 +41,8 @@ internal class UserControllerTest @Autowired constructor(
                 .andExpect {
                     status { isOk() }
                     content {contentType(MediaType.APPLICATION_JSON)}
-                    jsonPath("$[0].name") {
-                        value("Deniz")
+                    jsonPath("$[0].departure_point") {
+                        value("Kavacık")
                     }
                 }
 
@@ -49,60 +50,52 @@ internal class UserControllerTest @Autowired constructor(
     }
 
     @Nested
-    @DisplayName("GET /api/users/{mail}")
+    @DisplayName("GET /api/buses/{id}")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class GetUser{
+    inner class GetBus{
         @Test
-        fun `should return the user with the given mail`() {
+        fun `should return the Bus with the given id`() {
             // given
-            val mail = "dila@gmail.com"
+            val id = 3
 
             // when/then
-            mockMvc.get("$baseUrl/$mail")
+            mockMvc.get("$baseUrl/$id")
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.name") {value("Dilanur")}
-                    jsonPath("$.surname") {value("Gider")}
+                    jsonPath("$.departure_point") {value("Türk Alman Üniversitesi")}
                 }
 
         }
 
         @Test
-        fun `should return NOT FOUND if the mail does not exist`() {
+        fun `should return NOT FOUND if the id does not exist`() {
             // given
-            val mail = "does_not_exist"
+            val id = 1000000
 
             // when / then
-            mockMvc.get("$baseUrl/$mail").andDo { print() }
+            mockMvc.get("$baseUrl/$id").andDo { print() }
                 .andExpect {
                     status { isNotFound() }
                 }
 
         }
     }
-    
+
     @Nested
-    @DisplayName("POST /api/users")
+    @DisplayName("POST /api/buses")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class PostNewUser {
+    inner class PostNewBus {
         @Test
-        fun `should add the new user`() {
+        fun `should add the new Bus`() {
             // given
-            val newUser = User(
-                UUID.randomUUID(),
-                "Ayşe",
-                "Derli",
-                "ayse@gmail.com",
-                "123",
-                "05385427348",
-                "student")
-            
+            val newBus = Bus(0, LocalDateTime.of(2035, 12, 12, 12, 0),"Kavacık")
+
             // when
             val performPost = mockMvc.post("$baseUrl/") {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(newUser)
+                content = objectMapper.writeValueAsString(newBus)
             }
 
             //then
@@ -112,32 +105,25 @@ internal class UserControllerTest @Autowired constructor(
                     status { isCreated() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(newUser))
+                        json(objectMapper.writeValueAsString(newBus))
                     }
                 }
 
-            mockMvc.get("$baseUrl/${newUser.mail}")
-                .andExpect { content { json(objectMapper.writeValueAsString(newUser)) } }
+            mockMvc.get("$baseUrl/${newBus.ID}")
+                .andExpect { content { json(objectMapper.writeValueAsString(newBus)) } }
 
-            
+
         }
 
         @Test
-        fun `should return BAD REQUEST if user with given gmail already exists`() {
+        fun `should return BAD REQUEST if Bus with given id already exists`() {
             // given
-            val invalidUser = User(
-                UUID.randomUUID(),
-                "Helga",
-                "Dinç",
-                "hasan@gmail.com",
-                "123",
-                "05385427348",
-                "student")
+            val invalidBus = Bus(100, LocalDateTime.of(2022, 12, 12, 12, 0),"Kavacık")
 
             // when
             val performPost = mockMvc.post("$baseUrl/") {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(invalidUser)
+                content = objectMapper.writeValueAsString(invalidBus)
             }
 
 
@@ -153,33 +139,33 @@ internal class UserControllerTest @Autowired constructor(
 
 
     @Nested
-    @DisplayName("DELETE /api/users/{mail}")
+    @DisplayName("DELETE /api/buses/{id}")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class DeleteExistingUser{
+    inner class DeleteExistingBus{
         @Test
         @DirtiesContext
-        fun `should delete the user with the given mail`() {
+        fun `should delete the Bus with the given id`() {
             // given
-            val mail = "hasan@gmail.com"
+            val id = 1
 
             // when/then
-            mockMvc.delete("$baseUrl/$mail")
+            mockMvc.delete("$baseUrl/$id")
                 .andDo { print() }
                 .andExpect { status { isNoContent() }
                 }
 
-            mockMvc.get("$baseUrl/$mail")
+            mockMvc.get("$baseUrl/$id")
                 .andExpect { status { isNotFound() } }
 
         }
 
         @Test
-        fun `should return NOT FOUND if no user with given mail exists`() {
+        fun `should return NOT FOUND if no Bus with given id exists`() {
             // given
-            val invalidMail = "does_not_exist"
+            val invalidId =  900000000
 
             // when/then
-            mockMvc.delete("$baseUrl/$invalidMail")
+            mockMvc.delete("$baseUrl/$invalidId")
                 .andDo { print() }
                 .andExpect { status{ isNotFound() } }
 
@@ -188,25 +174,19 @@ internal class UserControllerTest @Autowired constructor(
 
 
     @Nested
-    @DisplayName("PATCH /api/users")
+    @DisplayName("PATCH /api/buses")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class PatchExistingUser{
+    inner class PatchExistingBus{
         @Test
-        fun `should update an existing user`() {
+        fun `should update an existing Bus`() {
+            /*
             // given
-            val updatedUser = User(
-                UUID.randomUUID(),
-                "Hasan Can",
-                "Dizdar",
-                "hasan@gmail.com",
-                "12354",
-                "0538",
-                "student")
+            val updatedBus = Bus(0, LocalDateTime.of(2049, 12, 12, 12, 0),"Beykpz")
 
             // when
             val performPatchRequest = mockMvc.patch(baseUrl) {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(updatedUser)
+                content = objectMapper.writeValueAsString(updatedBus)
             }
 
             // then
@@ -216,32 +196,27 @@ internal class UserControllerTest @Autowired constructor(
                     status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(updatedUser))
+                        json(objectMapper.writeValueAsString(updatedBus))
                     }
                 }
 
-            // user informations really updated,not tricked us by just returning our original object
-            mockMvc.get("$baseUrl/${updatedUser.mail}")
-                .andExpect { content { json(objectMapper.writeValueAsString(updatedUser)) } }
-
+            // Bus informations really updated,not tricked us by just returning our original object
+            mockMvc.get("$baseUrl/${updatedBus.ID}")
+                .andExpect { content { json(objectMapper.writeValueAsString(updatedBus)) } }
+            /*
         }
 
         @Test
-        fun `should return BAD REQUEST if no user with given mail exists`() {
+        fun `should return BAD REQUEST if no Bus with given id exists`() {
+
+             */
             // given
-            val invalidUser = User(
-                UUID.randomUUID(),
-                "Hasan Can",
-                "Dizdar",
-                "does_not_exist@gmail.com",
-                "12354",
-                "0538",
-                "student")
+            val invalidBus = Bus(200, LocalDateTime.of(2022, 12, 12, 12, 0),"Kavacık")
 
             // when
             val performPatchRequest = mockMvc.patch(baseUrl) {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(invalidUser)
+                content = objectMapper.writeValueAsString(invalidBus)
             }
 
             // then
@@ -250,7 +225,11 @@ internal class UserControllerTest @Autowired constructor(
                 .andExpect { status { isNotFound() } }
             //we except content to be empty too
 
+             */
+
         }
+
+
     }
 
 }

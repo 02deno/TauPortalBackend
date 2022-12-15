@@ -20,11 +20,11 @@ class MockMealDataSource : MealDataSource {
     override fun retrieveMeals(): Collection<Meal> = meals
 
     override fun retrieveMeal(date: LocalDateTime): Meal = meals.firstOrNull() {it.date == date}
-        ?:  throw NoSuchElementException("Could not find a Meal with id $date")
+        ?:  throw NoSuchElementException("Could not find a Meal with date $date")
 
     override fun createMeal(Meal: Meal): Meal {
         if(meals.any {it.date == Meal.date}) {
-            throw IllegalArgumentException("Meal with id ${Meal.date} already exists")
+            throw IllegalArgumentException("Meal with date ${Meal.date} already exists")
         }
         meals.add(Meal)
         return Meal

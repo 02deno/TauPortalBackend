@@ -23,7 +23,7 @@ class ClassroomController(private val service: ClassroomService) {
 
 
     @GetMapping
-    fun getclassrooms() : Collection<Classroom> = service.getClassrooms()
+    fun getClassrooms() : Collection<Classroom> = service.getClassrooms()
 
     @GetMapping("/{code}")
     fun getClassroom(@PathVariable code : UUID) = service.getClassroom(code)

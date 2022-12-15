@@ -1,6 +1,6 @@
 package com.example.tau.demo.controller
 
-import com.example.tau.demo.model.User
+import com.example.tau.demo.model.Meal
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
@@ -14,25 +14,26 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.*
+import java.time.LocalDateTime
 import java.util.*
 
 @SpringBootTest
 @AutoConfigureMockMvc
-internal class UserControllerTest @Autowired constructor(
+internal class MealControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper:ObjectMapper
 ) {
 
 
 
-    val baseUrl = "/api/users"
+    val baseUrl = "/api/meals"
 
     @Nested
-    @DisplayName("GET /api/users")
+    @DisplayName("GET /api/meals")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class GetUsers {
+    inner class GetMeals {
         @Test
-        fun `should return all users `() {
+        fun `should return all meals `() {
 
             // when/then
             mockMvc.get(baseUrl)
@@ -40,8 +41,8 @@ internal class UserControllerTest @Autowired constructor(
                 .andExpect {
                     status { isOk() }
                     content {contentType(MediaType.APPLICATION_JSON)}
-                    jsonPath("$[0].name") {
-                        value("Deniz")
+                    jsonPath("$[0].date") {
+                        value("2022-12-12T11:30:00")
                     }
                 }
 
@@ -49,60 +50,55 @@ internal class UserControllerTest @Autowired constructor(
     }
 
     @Nested
-    @DisplayName("GET /api/users/{mail}")
+    @DisplayName("GET /api/meals/{date}")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class GetUser{
+    inner class GetMeal{
         @Test
-        fun `should return the user with the given mail`() {
+        fun `should return the meal with the given date`() {
             // given
-            val mail = "dila@gmail.com"
+            val date = "2022-12-14T11:30:00"
 
             // when/then
-            mockMvc.get("$baseUrl/$mail")
+            mockMvc.get("$baseUrl/$date")
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("$.name") {value("Dilanur")}
-                    jsonPath("$.surname") {value("Gider")}
+                    jsonPath("$.date") {value("2022-12-14T11:30:00")}
                 }
 
         }
 
         @Test
-        fun `should return NOT FOUND if the mail does not exist`() {
+        fun `should return NOT FOUND if the meal does not exist`() {
             // given
-            val mail = "does_not_exist"
+            val date = "2022-12-12T11:30:08"
 
             // when / then
-            mockMvc.get("$baseUrl/$mail").andDo { print() }
+            mockMvc.get("$baseUrl/$date").andDo { print() }
                 .andExpect {
                     status { isNotFound() }
                 }
 
         }
     }
-    
+
     @Nested
-    @DisplayName("POST /api/users")
+    @DisplayName("POST /api/meals")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class PostNewUser {
+    inner class PostNewMeal {
         @Test
-        fun `should add the new user`() {
+        fun `should add the new meal`() {
             // given
-            val newUser = User(
+            val newMeal = Meal(
                 UUID.randomUUID(),
-                "Ayşe",
-                "Derli",
-                "ayse@gmail.com",
-                "123",
-                "05385427348",
-                "student")
-            
+                LocalDateTime.of(2023, 12, 14,11,30),
+                550)
+
             // when
             val performPost = mockMvc.post("$baseUrl/") {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(newUser)
+                content = objectMapper.writeValueAsString(newMeal)
             }
 
             //then
@@ -112,32 +108,28 @@ internal class UserControllerTest @Autowired constructor(
                     status { isCreated() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(newUser))
+                        json(objectMapper.writeValueAsString(newMeal))
                     }
                 }
 
-            mockMvc.get("$baseUrl/${newUser.mail}")
-                .andExpect { content { json(objectMapper.writeValueAsString(newUser)) } }
+            mockMvc.get("$baseUrl/${newMeal.date}")
+                .andExpect { content { json(objectMapper.writeValueAsString(newMeal)) } }
 
-            
+
         }
 
         @Test
-        fun `should return BAD REQUEST if user with given gmail already exists`() {
+        fun `should return BAD REQUEST if Meal with given date already exists`() {
             // given
-            val invalidUser = User(
+            val invalidMeal = Meal(
                 UUID.randomUUID(),
-                "Helga",
-                "Dinç",
-                "hasan@gmail.com",
-                "123",
-                "05385427348",
-                "student")
+                LocalDateTime.of(2023, 12, 14,11,30),
+                550)
 
             // when
             val performPost = mockMvc.post("$baseUrl/") {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(invalidUser)
+                content = objectMapper.writeValueAsString(invalidMeal)
             }
 
 
@@ -153,33 +145,33 @@ internal class UserControllerTest @Autowired constructor(
 
 
     @Nested
-    @DisplayName("DELETE /api/users/{mail}")
+    @DisplayName("DELETE /api/meals/{date}")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class DeleteExistingUser{
+    inner class DeleteExistingMeal{
         @Test
         @DirtiesContext
-        fun `should delete the user with the given mail`() {
+        fun `should delete the meal with the given date`() {
             // given
-            val mail = "hasan@gmail.com"
+            val date = "2022-12-14T11:30:00"
 
             // when/then
-            mockMvc.delete("$baseUrl/$mail")
+            mockMvc.delete("$baseUrl/$date")
                 .andDo { print() }
                 .andExpect { status { isNoContent() }
                 }
 
-            mockMvc.get("$baseUrl/$mail")
+            mockMvc.get("$baseUrl/$date")
                 .andExpect { status { isNotFound() } }
 
         }
 
         @Test
-        fun `should return NOT FOUND if no user with given mail exists`() {
+        fun `should return NOT FOUND if no meal with given date exists`() {
             // given
-            val invalidMail = "does_not_exist"
+            val invalidDate = "2022-12-12T11:30:07"
 
             // when/then
-            mockMvc.delete("$baseUrl/$invalidMail")
+            mockMvc.delete("$baseUrl/$invalidDate")
                 .andDo { print() }
                 .andExpect { status{ isNotFound() } }
 
@@ -188,25 +180,21 @@ internal class UserControllerTest @Autowired constructor(
 
 
     @Nested
-    @DisplayName("PATCH /api/users")
+    @DisplayName("PATCH /api/meals")
     @TestInstance(Lifecycle.PER_CLASS)
-    inner class PatchExistingUser{
+    inner class PatchExistingMeal{
         @Test
-        fun `should update an existing user`() {
+        fun `should update an existing meal`() {
             // given
-            val updatedUser = User(
+            val updatedMeal = Meal(
                 UUID.randomUUID(),
-                "Hasan Can",
-                "Dizdar",
-                "hasan@gmail.com",
-                "12354",
-                "0538",
-                "student")
+                LocalDateTime.of(2022, 12, 12,11,30),
+                555)
 
             // when
             val performPatchRequest = mockMvc.patch(baseUrl) {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(updatedUser)
+                content = objectMapper.writeValueAsString(updatedMeal)
             }
 
             // then
@@ -216,32 +204,29 @@ internal class UserControllerTest @Autowired constructor(
                     status { isOk() }
                     content {
                         contentType(MediaType.APPLICATION_JSON)
-                        json(objectMapper.writeValueAsString(updatedUser))
+                        json(objectMapper.writeValueAsString(updatedMeal))
                     }
                 }
 
-            // user informations really updated,not tricked us by just returning our original object
-            mockMvc.get("$baseUrl/${updatedUser.mail}")
-                .andExpect { content { json(objectMapper.writeValueAsString(updatedUser)) } }
+            // Meal informations really updated,not tricked us by just returning our original object
+            mockMvc.get("$baseUrl/${updatedMeal.date}")
+                .andExpect { content { json(objectMapper.writeValueAsString(updatedMeal)) } }
 
         }
 
         @Test
-        fun `should return BAD REQUEST if no user with given mail exists`() {
+        fun `should return BAD REQUEST if no meal with given date exists`() {
             // given
-            val invalidUser = User(
+            val invalidMeal = Meal(
                 UUID.randomUUID(),
-                "Hasan Can",
-                "Dizdar",
-                "does_not_exist@gmail.com",
-                "12354",
-                "0538",
-                "student")
+                LocalDateTime.of(2030, 12, 14,11,30),
+                555)
+
 
             // when
             val performPatchRequest = mockMvc.patch(baseUrl) {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(invalidUser)
+                content = objectMapper.writeValueAsString(invalidMeal)
             }
 
             // then
@@ -254,5 +239,3 @@ internal class UserControllerTest @Autowired constructor(
     }
 
 }
-
-

@@ -11,13 +11,13 @@ import kotlin.NoSuchElementException
 @Repository
 class MockBusDataSource : BusDataSource {
     val buses = mutableListOf<Bus>(
-        Bus(1, LocalDateTime.of(2022, 12, 12, 12, 0),"Kavacık"),
-        Bus(2, LocalDateTime.of(2022, 12, 12, 12, 30),"Kavacık"),
-        Bus(3, LocalDateTime.of(2022, 12, 12, 13, 0),"Kavacık"),
+        Bus(6, LocalDateTime.of(2022, 12, 12, 12, 0),"Kavacık"),
+        Bus(1, LocalDateTime.of(2022, 12, 12, 12, 30),"Kavacık"),
+        Bus(2, LocalDateTime.of(2022, 12, 12, 13, 0),"Kavacık"),
 
-        Bus(4, LocalDateTime.of(2022, 12, 12, 16, 10),"Türk Alman Üniversitesi"),
-        Bus(5, LocalDateTime.of(2022, 12, 12, 16, 30),"Türk Alman Üniversitesi"),
-        Bus(6, LocalDateTime.of(2022, 12, 12, 18, 45),"Türk Alman Üniversitesi")
+        Bus(3, LocalDateTime.of(2022, 12, 12, 16, 10),"Türk Alman Üniversitesi"),
+        Bus(4, LocalDateTime.of(2022, 12, 12, 16, 30),"Türk Alman Üniversitesi"),
+        Bus(5, LocalDateTime.of(2022, 12, 12, 18, 45),"Türk Alman Üniversitesi")
     )
 
     override fun retrieveBuses(): Collection<Bus> = buses
